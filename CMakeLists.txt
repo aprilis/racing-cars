@@ -20,23 +20,23 @@ target_include_directories(all_deps INTERFACE /usr/include/eigen3)
 add_executable(DNN_NSGA2 experiments/DNN_NSGA2.cpp)
 target_link_libraries(DNN_NSGA2 PRIVATE all_deps)
 
-add_executable(DNN_NSGA2_vis experiments/DNN_NSGA2_visualise.cpp)
-target_link_libraries(DNN_NSGA2_vis PRIVATE all_deps)
+add_executable(DNN_vis experiments/DNN_vis.cpp)
+target_link_libraries(DNN_vis PRIVATE all_deps)
 
-add_executable(DNN_NSGA2_2L experiments/DNN_NSGA2_2layer.cpp)
-target_link_libraries(DNN_NSGA2_2L PRIVATE all_deps)
+add_executable(DNN_20_NSGA2 experiments/DNN_20_NSGA2.cpp)
+target_link_libraries(DNN_20_NSGA2 PRIVATE all_deps)
 
-add_executable(DNN_NSGA2_2L_vis experiments/DNN_NSGA2_2layer_visualise.cpp)
-target_link_libraries(DNN_NSGA2_2L_vis PRIVATE all_deps)
+add_executable(DNN_20_vis experiments/DNN_20_vis.cpp)
+target_link_libraries(DNN_20_vis PRIVATE all_deps)
 
-add_executable(DNN_CMAES experiments/DNN_CMA_ES.cpp)
-target_link_libraries(DNN_CMAES PRIVATE all_deps)
+add_executable(DNN_20_CMA_ES experiments/DNN_20_CMA_ES.cpp)
+target_link_libraries(DNN_20_CMA_ES PRIVATE all_deps)
 
-add_executable(DNN_NSGA2_islands experiments/DNN_NSGA2_islands.cpp)
-target_link_libraries(DNN_NSGA2_islands PRIVATE all_deps)
+add_executable(DNN_20_NSGA2_islands experiments/DNN_20_NSGA2_islands.cpp)
+target_link_libraries(DNN_20_NSGA2_islands PRIVATE all_deps)
 
-add_executable(DNN_GACO experiments/DNN_GACO.cpp)
-target_link_libraries(DNN_GACO PRIVATE all_deps)
+add_executable(DNN_20_GACO experiments/DNN_20_GACO.cpp)
+target_link_libraries(DNN_20_GACO PRIVATE all_deps)
 
-add_executable(DNN_NSGA2_multi experiments/DNN_NSGA2_multi.cpp)
-target_link_libraries(DNN_NSGA2_multi PRIVATE all_deps)
+add_executable(DNN_20_NSGA2_multi experiments/DNN_20_NSGA2_multi.cpp)
+target_link_libraries(DNN_20_NSGA2_multi PRIVATE all_deps)
