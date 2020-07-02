@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     auto t = time(nullptr);
     auto tm = *localtime(&t);
     std::ostringstream oss;
-    oss << "DNN_X_20_Y_" << std::put_time(&tm, "%d%m_%H%M%S");
+    oss << "DNN_20_" << std::put_time(&tm, "%d%m_%H%M%S");
     auto filename = oss.str();
 
     {

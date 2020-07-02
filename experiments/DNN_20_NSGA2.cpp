@@ -52,21 +52,38 @@ int main(int argc, char *argv[]) {
     algo.set_verbosity(1);
     pop = algo.evolve(pop);
 
-    std::cout << "The population: \n" << pop;
-
     if(!fs::exists("population")) {
         fs::create_directory("population");
+    }
+    if(!fs::exists("logs")) {
+        fs::create_directory("logs");
     }
 
     auto t = time(nullptr);
     auto tm = *localtime(&t);
     std::ostringstream oss;
-    oss << "population/DNN_NSGA2_2L_" << std::put_time(&tm, "%d%m_%H%M%S");
+    oss << "DNN_20_" << std::put_time(&tm, "%d%m_%H%M%S");
     auto filename = oss.str();
 
-    ofstream of(filename);
-    boost::archive::text_oarchive ar(of);
-    ar << pop.get_x();
+    {
+        auto filePath = "population/" + filename;
+        ofstream of(filePath);
+        boost::archive::text_oarchive ar(of);
+        ar << pop.get_x();
 
-    cout << "saved to " << filename << endl;
+        cout << "Population saved to " << filePath << endl;
+    }
+    {
+        auto filePath = "logs/" + filename;
+        ofstream of(filePath);
+        auto log = algo.extract<nsga2>()->get_log();
+        for(auto l: log) {
+            for(auto x: get<2>(l)) {
+                of << -x << " ";
+            }
+            of << "\n";
+        }
+
+        cout << "Log saved to " << filePath << endl;
+    }
 }
