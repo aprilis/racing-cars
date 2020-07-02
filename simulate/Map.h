@@ -35,9 +35,7 @@ public:
     }
 
     int getDist(int x, int y) const {
-        if(x < 0 || y < 0 || x >= getSize().x || y >= getSize().y) {
-            return -1;
-        }
+        if(!isFree(x, y)) return -1;
         return dist[x][y];
     }
 

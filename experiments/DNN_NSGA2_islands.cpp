@@ -4,6 +4,7 @@
 #include <pagmo/algorithms/nsga2.hpp>
 #include <pagmo/population.hpp>
 #include <pagmo/problem.hpp>
+#include <pagmo/archipelago.hpp>
 using namespace pagmo;
 
 #include <boost/archive/text_oarchive.hpp>
@@ -15,7 +16,7 @@ namespace fs = std::experimental::filesystem;
 const int UPDATES_PER_SECOND = 30;
 
 int main(int argc, char *argv[]) {
-    if(argc < 5) {
+    if(argc != 5) {
         cerr << "4 parameters required: map path, time limit, number of generations, population size" << endl;
         return 0;
     }
@@ -34,25 +35,23 @@ int main(int argc, char *argv[]) {
     DNNProblem p {d, s, 10};
     problem prob {p};
     algorithm algo{nsga2(generations)};
-    population pop{prob};
-    if(argc >= 6) {
-        vector<vector_double> vecs;
-        ifstream file(argv[5]);
-        boost::archive::text_iarchive ar(file);
-        ar >> vecs;
-        for(auto v: vecs)
-            pop.push_back(v);
-    } else {
-        int n = d.getParamsN();
-        for(int i = 0; i < populationSize; i++) {
-            vec v = randn(n);
-            pop.push_back(vector<double>(v.begin(), v.end()));
-        }
-    }
     algo.set_verbosity(1);
-    pop = algo.evolve(pop);
+    archipelago arch{16u, algo, prob, 20u};
+    /*int n = d.getParamsN();
+    for(int i = 0; i < populationSize; i++) {
+        vec v = randn(n);
+        pop.push_back(vector<double>(v.begin(), v.end()));
+    }  
+    pop = algo.evolve(pop);*/
+    arch.evolve(10);
 
-    std::cout << "The population: \n" << pop;
+    arch.wait_check();
+
+    for (const auto &isl : arch) {
+        std::cout << isl.get_population() << '\n';
+    }
+
+    /*std::cout << "The population: \n" << pop;
 
     if(!fs::exists("population")) {
         fs::create_directory("population");
@@ -68,5 +67,5 @@ int main(int argc, char *argv[]) {
     boost::archive::text_oarchive ar(of);
     ar << pop.get_x();
 
-    cout << "saved to " << filename << endl;
+    cout << "saved to " << filename << endl;*/
 }

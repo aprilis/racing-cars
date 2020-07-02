@@ -15,11 +15,11 @@ namespace fs = std::experimental::filesystem;
 const int UPDATES_PER_SECOND = 30;
 
 int main(int argc, char *argv[]) {
-    if(argc < 5) {
-        cerr << "4 parameters required: map path, time limit, number of generations, population size" << endl;
+    if(argc < 6) {
+        cerr << "5 parameters required: initial_population, time limit, number of generations, population size, map paths" << endl;
         return 0;
     }
-    string path = argv[1];
+    string populationPath = argv[1];
     int timeLimit = atoi(argv[2]);
     int generations = atoi(argv[3]);
     int populationSize = atoi(argv[4]);
@@ -30,14 +30,18 @@ int main(int argc, char *argv[]) {
     cerr << "Population size: " << populationSize << endl;
 
     DNN d({ Car::RAYS + 1, 20, 2 });
-    Simulator s(path, timeLimit, UPDATES_PER_SECOND);
-    DNNProblem p {d, s, 10};
+    vector<Simulator> sims;
+    for(int i = 5; i < argc; i++) {
+        sims.emplace_back(argv[i], timeLimit, UPDATES_PER_SECOND);
+    }
+    DNNMultiProblem p {d, sims, 10};
     problem prob {p};
     algorithm algo{nsga2(generations)};
     population pop{prob};
-    if(argc >= 6) {
+    
+    if(populationPath != "random") {
         vector<vector_double> vecs;
-        ifstream file(argv[5]);
+        ifstream file(populationPath);
         boost::archive::text_iarchive ar(file);
         ar >> vecs;
         for(auto v: vecs)

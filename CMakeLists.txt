@@ -15,6 +15,7 @@ target_link_libraries(TestGame simulate visualise armadillo sfml-window sfml-gra
 
 add_library(all_deps INTERFACE)
 target_link_libraries(all_deps INTERFACE ai simulate visualise armadillo sfml-window sfml-graphics sfml-system pagmo boost_serialization tbb stdc++fs)
+target_include_directories(all_deps INTERFACE /usr/include/eigen3)
 
 add_executable(DNN_NSGA2 experiments/DNN_NSGA2.cpp)
 target_link_libraries(DNN_NSGA2 PRIVATE all_deps)
@@ -27,3 +28,15 @@ target_link_libraries(DNN_NSGA2_2L PRIVATE all_deps)
 
 add_executable(DNN_NSGA2_2L_vis experiments/DNN_NSGA2_2layer_visualise.cpp)
 target_link_libraries(DNN_NSGA2_2L_vis PRIVATE all_deps)
+
+add_executable(DNN_CMAES experiments/DNN_CMA_ES.cpp)
+target_link_libraries(DNN_CMAES PRIVATE all_deps)
+
+add_executable(DNN_NSGA2_islands experiments/DNN_NSGA2_islands.cpp)
+target_link_libraries(DNN_NSGA2_islands PRIVATE all_deps)
+
+add_executable(DNN_GACO experiments/DNN_GACO.cpp)
+target_link_libraries(DNN_GACO PRIVATE all_deps)
+
+add_executable(DNN_NSGA2_multi experiments/DNN_NSGA2_multi.cpp)
+target_link_libraries(DNN_NSGA2_multi PRIVATE all_deps)

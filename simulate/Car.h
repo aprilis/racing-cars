@@ -15,7 +15,7 @@ class Car {
 public:
     static constexpr double MAX_ACC = 100;
     static constexpr double MAX_BRAKE = 300;
-    static constexpr double MAX_TURN = M_PI / 6;
+    static constexpr double MAX_TURN = M_PI / 4;
     
     static constexpr int WIDTH = 20;
     static constexpr int LENGTH = 40;

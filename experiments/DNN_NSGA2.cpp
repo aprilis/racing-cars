@@ -7,6 +7,7 @@
 using namespace pagmo;
 
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include <fstream>
 #include <ctime>
 #include <experimental/filesystem>
@@ -15,7 +16,7 @@ namespace fs = std::experimental::filesystem;
 const int UPDATES_PER_SECOND = 30;
 
 int main(int argc, char *argv[]) {
-    if(argc != 5) {
+    if(argc < 5) {
         cerr << "4 parameters required: map path, time limit, number of generations, population size" << endl;
         return 0;
     }
@@ -35,10 +36,19 @@ int main(int argc, char *argv[]) {
     problem prob {p};
     algorithm algo{nsga2(generations)};
     population pop{prob};
-    int n = d.getParamsN();
-    for(int i = 0; i < populationSize; i++) {
-        vec v = randn(n);
-        pop.push_back(vector<double>(v.begin(), v.end()));
+    if(argc >= 6) {
+        vector<vector_double> vecs;
+        ifstream file(argv[5]);
+        boost::archive::text_iarchive ar(file);
+        ar >> vecs;
+        for(auto v: vecs)
+            pop.push_back(v);
+    } else {
+        int n = d.getParamsN();
+        for(int i = 0; i < populationSize; i++) {
+            vec v = randn(n);
+            pop.push_back(vector<double>(v.begin(), v.end()));
+        }
     }
     algo.set_verbosity(1);
     pop = algo.evolve(pop);

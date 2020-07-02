@@ -1,7 +1,7 @@
 #include "../ai/Problems.h"
 
 #include <pagmo/algorithm.hpp>
-#include <pagmo/algorithms/nsga2.hpp>
+#include <pagmo/algorithms/gaco.hpp>
 #include <pagmo/population.hpp>
 #include <pagmo/problem.hpp>
 using namespace pagmo;
@@ -15,7 +15,7 @@ namespace fs = std::experimental::filesystem;
 const int UPDATES_PER_SECOND = 30;
 
 int main(int argc, char *argv[]) {
-    if(argc < 5) {
+    if(argc != 5) {
         cerr << "4 parameters required: map path, time limit, number of generations, population size" << endl;
         return 0;
     }
@@ -31,23 +31,14 @@ int main(int argc, char *argv[]) {
 
     DNN d({ Car::RAYS + 1, 20, 2 });
     Simulator s(path, timeLimit, UPDATES_PER_SECOND);
-    DNNProblem p {d, s, 10};
+    DNN1DProblem p {d, s, 10};
     problem prob {p};
-    algorithm algo{nsga2(generations)};
+    algorithm algo{gaco(generations)};
     population pop{prob};
-    if(argc >= 6) {
-        vector<vector_double> vecs;
-        ifstream file(argv[5]);
-        boost::archive::text_iarchive ar(file);
-        ar >> vecs;
-        for(auto v: vecs)
-            pop.push_back(v);
-    } else {
-        int n = d.getParamsN();
-        for(int i = 0; i < populationSize; i++) {
-            vec v = randn(n);
-            pop.push_back(vector<double>(v.begin(), v.end()));
-        }
+    int n = d.getParamsN();
+    for(int i = 0; i < populationSize; i++) {
+        vec v = randn(n);
+        pop.push_back(vector<double>(v.begin(), v.end()));
     }
     algo.set_verbosity(1);
     pop = algo.evolve(pop);
@@ -61,7 +52,7 @@ int main(int argc, char *argv[]) {
     auto t = time(nullptr);
     auto tm = *localtime(&t);
     std::ostringstream oss;
-    oss << "population/DNN_NSGA2_2L_" << std::put_time(&tm, "%d%m_%H%M%S");
+    oss << "population/DNN_GACO_" << std::put_time(&tm, "%d%m_%H%M%S");
     auto filename = oss.str();
 
     ofstream of(filename);
