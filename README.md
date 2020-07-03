@@ -1,3 +1,5 @@
+Raport dostępny jest w pliku [Raport.ipynb](Raport.ipynb)
+
 # Instalacja
 
 ## 1. Zależności
