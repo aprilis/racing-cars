@@ -1,10 +1,9 @@
 #include "../ai/Problems.h"
 
 #include <pagmo/algorithm.hpp>
-#include <pagmo/algorithms/nsga2.hpp>
+#include <pagmo/algorithms/sade.hpp>
 #include <pagmo/population.hpp>
 #include <pagmo/problem.hpp>
-#include <pagmo/archipelago.hpp>
 using namespace pagmo;
 
 #include <boost/archive/text_oarchive.hpp>
@@ -32,40 +31,49 @@ int main(int argc, char *argv[]) {
 
     DNN d({ Car::RAYS + 1, 20, 2 });
     Simulator s(path, timeLimit, UPDATES_PER_SECOND);
-    DNNProblem p {d, s, 10};
+    DNN1DProblem p {d, s, 10};
     problem prob {p};
-    algorithm algo{nsga2(generations)};
-    algo.set_verbosity(1);
-    archipelago arch{16u, algo, prob, 20u};
-    /*int n = d.getParamsN();
+    algorithm algo{sade(generations)};
+    population pop{prob};
+    int n = d.getParamsN();
     for(int i = 0; i < populationSize; i++) {
         vec v = randn(n);
         pop.push_back(vector<double>(v.begin(), v.end()));
-    }  
-    pop = algo.evolve(pop);*/
-    arch.evolve(10);
-
-    arch.wait_check();
-
-    for (const auto &isl : arch) {
-        std::cout << isl.get_population() << '\n';
     }
+    algo.set_verbosity(1);
+    pop = algo.evolve(pop);
 
-    /*std::cout << "The population: \n" << pop;
+    std::cout << "The population: \n" << pop;
 
     if(!fs::exists("population")) {
         fs::create_directory("population");
+    }
+    if(!fs::exists("logs")) {
+        fs::create_directory("logs");
     }
 
     auto t = time(nullptr);
     auto tm = *localtime(&t);
     std::ostringstream oss;
-    oss << "population/DNN_NSGA2_2L_" << std::put_time(&tm, "%d%m_%H%M%S");
+    oss << "DNN_20_" << std::put_time(&tm, "%d%m_%H%M%S");
     auto filename = oss.str();
 
-    ofstream of(filename);
-    boost::archive::text_oarchive ar(of);
-    ar << pop.get_x();
+    {
+        auto filePath = "population/" + filename;
+        ofstream of(filePath);
+        boost::archive::text_oarchive ar(of);
+        ar << pop.get_x();
 
-    cout << "saved to " << filename << endl;*/
+        cout << "Population saved to " << filePath << endl;
+    }
+    {
+        auto filePath = "logs/" + filename;
+        ofstream of(filePath);
+        auto log = algo.extract<sade>()->get_log();
+        for(auto l: log) {
+            of << get<2>(l) << "\n";
+        }
+
+        cout << "Log saved to " << filePath << endl;
+    }
 }
